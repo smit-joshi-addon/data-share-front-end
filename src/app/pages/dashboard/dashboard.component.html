@@ -1,4 +1,5 @@
-<div class="row">
+<!--
+ <div class="row">
   <div class="col-xxxl-3 col-md-6" *ngFor="let statusCard of statusCards">
     <ngx-status-card [title]="statusCard.title" [type]="statusCard.type">
       <i [ngClass]="statusCard.iconClass"></i>
@@ -6,7 +7,20 @@
   </div>
 </div>
 
+-->
+
 <div class="row">
+  <div class="col-lg-6">
+    <nb-card>
+      <nb-card-header>Analytics</nb-card-header>
+      <nb-card-body>
+        <ngx-echarts-area-stack></ngx-echarts-area-stack>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
+
+<!-- <div class="row">
   <div class="col-xxxl-3 col-xxl-4 col-lg-5 col-md-6">
     <ngx-temperature></ngx-temperature>
   </div>
@@ -39,4 +53,5 @@
   <div class="col-xxxl-6 col-xxl-12 col-md-7">
     <ngx-security-cameras></ngx-security-cameras>
   </div>
-</div>
+</div> -->
+
