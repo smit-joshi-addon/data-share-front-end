@@ -1,56 +1,7 @@
 <div class="row">
-  <div class="col-md-6">
-    <nb-card>
-      <nb-card-header>Add Master Entry</nb-card-header>
-      <nb-card-body>
-        <form>
-          <div class="form-group">
-            <label for="business-select" class="label">Select business</label>
-            <select class="form-control" id="business-select">
-              <option value="1">Business 1</option>
-              <option value="2">Business 2</option>
-              <option value="3">Business 3</option>
-              <option value="4">Business 4</option>
-            </select>
-          </div>
-          <div class="form-group">
-              <label for="status-radio">Status</label>
-              <nb-radio-group [(value)]="radioGroupValue" class="status-radio" id="status-radio">
-                <nb-radio [value]="'true'">
-                  Active
-                </nb-radio>
-                <nb-radio [value]="'false'">
-                  In active
-                </nb-radio>
-              </nb-radio-group>
-          </div>
-
-          <div class="form-group">
-            <label for="request-type-radio">Request Type</label>
-            <nb-radio-group [(value)]="radioGroupValue" class="status-radio" id="request-type-radio">
-              <nb-radio [value]="'PULL'">
-               Pull
-              </nb-radio>
-              <nb-radio [value]="'PUSH'">
-                Push
-              </nb-radio>
-              <nb-radio [value]="'BOTH'">
-                Both
-              </nb-radio>
-            </nb-radio-group>
-          </div>
-          <button type="submit" nbButton status="primary">Add Master</button>
-        </form>
-      </nb-card-body>
-    </nb-card>
-  </div>
-</div>
-
-<div class="row">
-
   <nb-card>
     <nb-card-header>
-      Available Masters
+      Available Details
     </nb-card-header>
 
     <nb-card-body>

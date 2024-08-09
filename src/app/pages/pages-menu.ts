@@ -19,6 +19,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/data-master'
   },
   {
+    title: 'Data Details',
+    icon: 'file-text-outline',
+    link: '/pages/data-detail'
+  },
+  {
     title: 'Auth',
     icon: 'lock-outline',
     children: [
