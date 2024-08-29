@@ -11,6 +11,8 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { NbPasswordAuthStrategy, NbAuthModule, NbAuthJWTToken } from '@nebular/auth';
+
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -39,6 +41,39 @@ import {
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
+    NbAuthModule.forRoot({
+      strategies: [
+        NbPasswordAuthStrategy.setup({
+
+          name: 'email',
+
+          baseEndpoint: 'http://localhost:8080',
+          login: {
+            redirect: {
+              success: '/pages/dashboard',
+              failure: null
+            },
+            endpoint: '/api/auth/login',
+            method: 'post',
+
+          },
+          register: {
+            redirect: {
+              success: '/pages/dashboard',
+              failure: null
+            },
+            endpoint: '/api/auth/register',
+            method: 'post',
+          },
+          token: {
+            class: NbAuthJWTToken,
+
+            key: 'token', // this parameter tells where to look for the token
+          }
+        }),
+      ],
+      forms: {},
+    }),
   ],
   bootstrap: [AppComponent],
 })
