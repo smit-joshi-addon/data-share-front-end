@@ -12,6 +12,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { DataMasterComponent } from './data-master/data-master.component';
 import { DataDetailComponent } from './data-detail/data-detail.component';
+import { TokenCellComponent } from './data-master/token-cell/token-cell.component';
+
 
 @NgModule({
   imports: [
@@ -31,7 +33,8 @@ import { DataDetailComponent } from './data-detail/data-detail.component';
     BusinessComponent,
     DataMasterComponent,
     DataDetailComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    TokenCellComponent
   ],
 })
 export class PagesModule {
