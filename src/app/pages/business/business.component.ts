@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { SmartTableData } from '../../@core/data/smart-table';
+import { BusinessService } from '../../service/business/business.service';
+import { Business } from '../../model/business.model';
 
 @Component({
-  selector: 'ngx-form-layouts',
+  selector: 'ngx-business',
   styleUrls: ['./business.component.scss'],
   templateUrl: './business.component.html',
-
 })
-export class BusinessComponent {
+export class BusinessComponent implements OnInit {
 
   settings = {
     add: {
@@ -26,45 +26,94 @@ export class BusinessComponent {
       confirmDelete: true,
     },
     columns: {
-      id: {
+      businessId: {
         title: 'ID',
         type: 'number',
       },
-      firstName: {
-        title: 'First Name',
-        type: 'string',
-      },
-      lastName: {
-        title: 'Last Name',
+      name: {
+        title: 'Name',
         type: 'string',
       },
       username: {
         title: 'Username',
         type: 'string',
-      },
-      email: {
-        title: 'E-mail',
-        type: 'string',
-      },
-      age: {
-        title: 'Age',
-        type: 'number',
-      },
+      }
     },
   };
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  business: Business = {
+    businessId: 0,
+    name: '',
+    username: '',
+    password: ''
+  };
+
+  constructor(private businessService: BusinessService) { }
+
+  ngOnInit(): void {
+    this.loadBusinesses();
+  }
+
+  loadBusinesses(): void {
+    this.businessService.getBusinesses().subscribe(
+      (data: Business[]) => {
+        this.source.load(data);
+      },
+      error => console.error('Error loading businesses', error)
+    );
   }
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
-      event.confirm.resolve();
+      this.businessService.deleteBusiness(event.data.businessId).subscribe(
+        () => {
+          event.confirm.resolve();
+          this.loadBusinesses(); // Refresh the table data
+        },
+        error => {
+          console.error('Error deleting business', error);
+          event.confirm.reject();
+        }
+      );
     } else {
       event.confirm.reject();
     }
+  }
+
+  onEditConfirm(event): void {
+    console.log(event.newData);
+    this.businessService.updateBusiness(event.data.businessId, event.newData).subscribe(
+      (data: Business) => {
+        event.confirm.resolve(data);
+        this.loadBusinesses(); // Refresh the table data
+      },
+      error => {
+        console.error('Error updating business', error);
+        event.confirm.reject();
+      }
+    );
+  }
+
+  addBusiness(): void {
+    this.businessService.addBusiness(this.business).subscribe(
+      (data: Business) => {
+        this.loadBusinesses(); // Refresh the table data
+        this.resetForm(); // Clear the form
+      },
+      error => {
+        console.error('Error creating business', error);
+      }
+    );
+  }
+
+  resetForm(): void {
+    this.business = {
+      businessId: 0,
+      name: '',
+      username: '',
+      password: ''
+    };
   }
 }
