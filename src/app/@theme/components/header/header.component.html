@@ -14,7 +14,7 @@
   <nb-actions size="small">
     <nb-action class="user-action" *nbIsGranted="['view', 'user']" >
       <nb-user [nbContextMenu]="userMenu"
-               [name]="user?.name">
+               [name]="user.name"  >
       </nb-user>
     </nb-action>
   </nb-actions>

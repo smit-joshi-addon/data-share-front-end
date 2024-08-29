@@ -44,9 +44,7 @@ import {
     NbAuthModule.forRoot({
       strategies: [
         NbPasswordAuthStrategy.setup({
-
           name: 'email',
-
           baseEndpoint: 'http://localhost:8080',
           login: {
             redirect: {
@@ -65,9 +63,9 @@ import {
             endpoint: '/api/auth/register',
             method: 'post',
           },
-          token: {
-            class: NbAuthJWTToken,
 
+          token: {
+            class: NbAuthJWTToken, // which type of token
             key: 'token', // this parameter tells where to look for the token
           }
         }),
