@@ -6,6 +6,8 @@ import { DataMasterService } from '../../service/data-master/data-master.service
 import { Business } from '../../model/business.model';
 import { BusinessService } from '../../service/business/business.service';
 import { TokenCellComponent } from './token-cell/token-cell.component';
+import { DataDetailService } from '../../service/data-detail/data-detail.service';
+import { DataDetailDTO } from '../../model/data-detail.model';
 
 
 @Component({
@@ -21,7 +23,7 @@ export class DataMasterComponent implements OnInit {
   requestType = RequestType;
   businesses: Business[] = [];
 
-  settings = {
+  masterSettings = {
     actions: false,
     columns: {
       sharingId: {
@@ -29,8 +31,9 @@ export class DataMasterComponent implements OnInit {
         type: 'number',
       },
       businessId: {
-        title: 'Business ID',
+        title: 'Business',
         type: 'number',
+        valuePrepareFunction: (businessId) => this.businesses.filter(business => business.businessId === businessId)[0].name
       },
       secret: {
         title: 'Secret',
@@ -66,7 +69,53 @@ export class DataMasterComponent implements OnInit {
     },
   };
 
-  source: LocalDataSource = new LocalDataSource();
+  detailSettings = {
+    actions: false,
+    columns: {
+      detailId: {
+        title: 'Detail ID',
+        type: 'number',
+      },
+      masterId: {
+        title: 'Master ID',
+        type: 'number',
+      },
+      secret: {
+        title: 'Secret',
+        type: 'custom',
+        renderComponent: TokenCellComponent, // Use the custom cell component
+      },
+      validTill: {
+        title: 'Valid Till',
+        type: 'string', // You might want to format this in your template
+      },
+      createdAt: {
+        title: 'Created At',
+        type: 'string', // You might want to format this in your template
+      },
+      createdById: {
+        title: 'Created By ID',
+        type: 'string',
+      },
+      createdByName: {
+        title: 'Created By Name',
+        type: 'string',
+      },
+      createdByIp: {
+        title: 'Created By IP',
+        type: 'string',
+      },
+      status: {
+        title: 'Status',
+        type: 'boolean',
+      },
+    },
+  };
+
+  masterSource: LocalDataSource = new LocalDataSource();
+
+  detailSource: LocalDataSource = new LocalDataSource();
+
   newMaster: DataMaster = {
     businessId: 1,
     status: true,
@@ -75,12 +124,14 @@ export class DataMasterComponent implements OnInit {
 
   constructor(
     private dataMasterService: DataMasterService,
-    private businessService: BusinessService
+    private businessService: BusinessService,
+    private dataDetailService: DataDetailService
   ) { }
 
   ngOnInit(): void {
     this.loadDataMasters();
     this.loadBusinesses();
+    this.loadDataDetails();
   }
 
   loadBusinesses(): void {
@@ -93,10 +144,21 @@ export class DataMasterComponent implements OnInit {
     );
   }
 
+  loadDataDetails(): void {
+    this.dataDetailService.getAllDataDetails().subscribe(
+      (data: DataDetailDTO[]) => {
+        this.detailSource.load(data);
+      },
+      error => {
+        console.error('Error fetching data details', error);
+      }
+    );
+  }
+
   loadDataMasters(): void {
     this.dataMasterService.getMasterRecords().subscribe(
       (data: DataMaster[]) => {
-        this.source.load(data);
+        this.masterSource.load(data);
       },
       (error) => console.error('Error loading data masters', error)
     );

@@ -6,7 +6,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BusinessComponent } from './business/business.component';
 import { DataMasterComponent } from './data-master/data-master.component';
-import { DataDetailComponent } from './data-detail/data-detail.component';
 
 const routes: Routes = [{
   path: '',
@@ -25,10 +24,6 @@ const routes: Routes = [{
     {
       path: 'data-master',
       component: DataMasterComponent,
-    },
-    {
-      path: 'data-detail',
-      component: DataDetailComponent,
     },
     {
       path: '',
