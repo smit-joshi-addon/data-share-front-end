@@ -24,7 +24,16 @@ export class DataMasterComponent implements OnInit {
   businesses: Business[] = [];
 
   masterSettings = {
-    actions: false,
+    actions: {
+      add: false,
+      delete: false,
+    },
+    edit: {
+      editButtonContent: '<i class="nb-edit"></i>',
+      saveButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+      confirmSave: true,
+    },
     columns: {
       sharingId: {
         title: 'ID',
@@ -164,6 +173,20 @@ export class DataMasterComponent implements OnInit {
     );
   }
 
+  onEditConfirm(event): void {
+    this.dataMasterService.updateMasterRecord(event.data.sharingId, event.newData).subscribe(
+      (data: DataMaster) => {
+        event.confirm.resolve(data);
+        this.loadDataMasters(); // Refresh the table data
+        this.loadDataDetails(); // Refresh the table data
+      },
+      (error) => {
+        console.error('Error updating data master', error);
+        event.confirm.reject();
+      }
+    );
+  }
+
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
       this.dataMasterService.deleteMasterRecord(event.data.sharingId).subscribe(
@@ -188,6 +211,7 @@ export class DataMasterComponent implements OnInit {
     this.dataMasterService.addMasterRecord(this.newMaster).subscribe(
       (data: DataMaster) => {
         this.loadDataMasters(); // Refresh the table data
+        this.loadDataDetails(); // Refresh the table data
         this.resetForm(); // Clear the form
       },
       (error) => console.error('Error creating data master', error)

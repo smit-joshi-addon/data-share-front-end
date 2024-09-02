@@ -39,7 +39,7 @@
   <nb-card>
     <nb-card-header>Available Masters</nb-card-header>
     <nb-card-body>
-      <ng2-smart-table [settings]="masterSettings" [source]="masterSource" (deleteConfirm)="onDeleteConfirm($event)">
+      <ng2-smart-table [settings]="masterSettings" [source]="masterSource" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onEditConfirm($event)">
       </ng2-smart-table>
     </nb-card-body>
   </nb-card>
