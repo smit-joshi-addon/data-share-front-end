@@ -1,10 +1,8 @@
 // src/app/models/data-master.model.ts
 
-export enum RequestType {
-  PULL = 'PULL',
-  PUSH = 'PUSH',
-  BOTH = 'BOTH'
-}
+import { RequestType } from "./request-type.model";
+
+
 
 export interface DataMaster {
   sharingId?: number;

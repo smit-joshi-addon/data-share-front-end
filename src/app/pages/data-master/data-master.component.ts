@@ -1,13 +1,14 @@
 // data-master.component.ts
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { DataMaster, RequestType } from '../../model/data-master.model';
+import { DataMaster } from '../../model/data-master.model';
 import { DataMasterService } from '../../service/data-master/data-master.service';
 import { Business } from '../../model/business.model';
 import { BusinessService } from '../../service/business/business.service';
 import { TokenCellComponent } from './token-cell/token-cell.component';
 import { DataDetailService } from '../../service/data-detail/data-detail.service';
 import { DataDetailDTO } from '../../model/data-detail.model';
+import { RequestType } from '../../model/request-type.model';
 
 
 @Component({
@@ -22,6 +23,9 @@ export class DataMasterComponent implements OnInit {
   requestTypeValue = RequestType.PULL; // Default value for request type
   requestType = RequestType;
   businesses: Business[] = [];
+  // Added property to hold businesses for the dropdown
+  filteredBusinesses: Business[] = [];
+
 
   masterSettings = {
     actions: {
@@ -35,27 +39,23 @@ export class DataMasterComponent implements OnInit {
       confirmSave: true,
     },
     columns: {
-      sharingId: {
-        title: 'ID',
-        type: 'number',
-      },
       businessId: {
         title: 'Business',
         type: 'number',
-        valuePrepareFunction: (businessId) => this.businesses.filter(business => business.businessId === businessId)[0].name
+        valuePrepareFunction: (businessId) => this.businesses.filter(business => business.businessId === businessId)[0].name,
+        editable: false,
       },
       secret: {
         title: 'Secret',
         type: 'custom',
         renderComponent: TokenCellComponent, // Use the custom cell component
+        editable: false,
       },
-      createdById: {
-        title: 'Created By ID',
-        type: 'string',
-      },
+
       createdByIp: {
         title: 'Created By IP',
         type: 'string',
+        editable: false,
       },
       status: {
         title: 'Status',
@@ -65,15 +65,27 @@ export class DataMasterComponent implements OnInit {
         title: 'Created At',
         type: 'string',
         valuePrepareFunction: (date) => new Date(date).toLocaleString(),
+        editable: false,
       },
       updatedAt: {
         title: 'Updated At',
         type: 'string',
         valuePrepareFunction: (date) => new Date(date).toLocaleString(),
+        editable: false,
       },
       type: {
         title: 'Request Type',
         type: 'string',
+        editor: {
+          type: 'list',
+          config: {
+            list: [
+              { value: RequestType.PULL, title: 'Pull' },
+              { value: RequestType.PUSH, title: 'Push' },
+              { value: RequestType.BOTH, title: 'Both' }
+            ]
+          }
+        }
       },
     },
   };
@@ -102,10 +114,6 @@ export class DataMasterComponent implements OnInit {
         title: 'Created At',
         type: 'string', // You might want to format this in your template
       },
-      createdById: {
-        title: 'Created By ID',
-        type: 'string',
-      },
       createdByName: {
         title: 'Created By Name',
         type: 'string',
@@ -118,6 +126,10 @@ export class DataMasterComponent implements OnInit {
         title: 'Status',
         type: 'boolean',
       },
+      type: {
+        title: 'Request Type',
+        type: 'string'
+      }
     },
   };
 
@@ -146,7 +158,6 @@ export class DataMasterComponent implements OnInit {
   loadBusinesses(): void {
     this.businessService.getBusinesses().subscribe(
       (data: Business[]) => {
-        console.log(data);
         this.businesses = data;
       },
       (error) => console.error('Error loading businesses', error)
@@ -168,12 +179,25 @@ export class DataMasterComponent implements OnInit {
     this.dataMasterService.getMasterRecords().subscribe(
       (data: DataMaster[]) => {
         this.masterSource.load(data);
+        this.filterBusinesses();
       },
       (error) => console.error('Error loading data masters', error)
     );
   }
 
+  // Filter businesses that are already present in DataMaster records
+  filterBusinesses(): void {
+    this.dataMasterService.getMasterRecords().subscribe(
+      (masters: DataMaster[]) => {
+        const usedBusinessIds = new Set(masters.map(master => master.businessId));
+        this.filteredBusinesses = this.businesses.filter(business => !usedBusinessIds.has(business.businessId));
+      },
+      (error) => console.error('Error fetching data masters for filtering', error)
+    );
+  }
+
   onEditConfirm(event): void {
+    console.log(event.newData);
     this.dataMasterService.updateMasterRecord(event.data.sharingId, event.newData).subscribe(
       (data: DataMaster) => {
         event.confirm.resolve(data);
@@ -205,6 +229,10 @@ export class DataMasterComponent implements OnInit {
   }
 
   onAddMaster(): void {
+    if (this.newMaster.businessId === null) {
+      alert('Please select a business.');
+      return;
+    }
     this.newMaster.createdAt = new Date().toISOString();
     this.newMaster.updatedAt = new Date().toISOString();
 
@@ -220,7 +248,7 @@ export class DataMasterComponent implements OnInit {
 
   resetForm(): void {
     this.newMaster = {
-      businessId: 1,
+      businessId: null,
       secret: '',
       createdById: '',
       createdByIp: '',

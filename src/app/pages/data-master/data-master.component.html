@@ -6,14 +6,14 @@
         <form (ngSubmit)="onAddMaster()">
           <div class="form-group">
             <label for="business-select" class="label">Select business</label>
-            <select class="form-control" id="business-select" [(ngModel)]="newMaster.businessId" name="businessId">
-              <option *ngFor="let business of businesses" [value]="business.businessId">{{ business.name }}</option>
+            <select class="form-control" id="business-select" [(ngModel)]="newMaster.businessId" name="businessId" placeholder="Select business" required>
+              <option *ngFor="let business of filteredBusinesses" [value]="business.businessId">{{ business.name }}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="status-radio">Status</label>
-            <nb-radio-group [(ngModel)]="newMaster.status" class="status-radio" id="status-radio" name="status">
+            <nb-radio-group [(ngModel)]="newMaster.status" class="status-radio" id="status-radio" name="status" required>
               <nb-radio [value]="true">Active</nb-radio>
               <nb-radio [value]="false">Inactive</nb-radio>
             </nb-radio-group>
@@ -21,7 +21,7 @@
 
           <div class="form-group">
             <label for="request-type-radio">Request Type</label>
-            <nb-radio-group [(ngModel)]="newMaster.type" class="status-radio" id="request-type-radio" name="type">
+            <nb-radio-group [(ngModel)]="newMaster.type" class="status-radio" id="request-type-radio" name="type" required>
               <nb-radio [value]="requestType.PULL">Pull</nb-radio>
               <nb-radio [value]="requestType.PUSH">Push</nb-radio>
               <nb-radio [value]="requestType.BOTH">Both</nb-radio>
