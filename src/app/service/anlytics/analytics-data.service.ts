@@ -17,22 +17,4 @@ export class AnalyticsDataService {
   getAnalyticsData(): Observable<any> {
     return this.http.get<AnalyticsData[]>(this.apiUrl);
   }
-
-  private processAnalyticsData(data: AnalyticsData[]): any {
-    // Process the data to count occurrences of each method
-    const methodCount = data.reduce((acc, entry) => {
-      const method = entry.methodName;
-      acc[method] = (acc[method] || 0) + 1;
-      return acc;
-    }, {});
-
-    // Convert the counts into arrays for charting
-    const methods = Object.keys(methodCount);
-    const counts = Object.values(methodCount);
-
-    return {
-      "methods": methods,
-      "counts": counts
-    };
-  }
 }

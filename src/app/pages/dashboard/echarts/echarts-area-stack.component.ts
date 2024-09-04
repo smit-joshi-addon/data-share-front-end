@@ -23,17 +23,11 @@ export class EchartsAreaStackComponent implements AfterViewInit, OnDestroy {
       const colors: any = config.variables;
       const echarts: any = config.variables.echarts;
 
-      // Fetch and process data
+      // Fetch data and update chart options
       this.dataSubscription = this.dataService.getAnalyticsData().pipe(
-        map(data => this.processData(data))
-      ).subscribe({
-        next: (processedData) => {
-          this.updateChartOptions(processedData, echarts, colors);
-        },
-        error: (err) => {
-          console.error('Error fetching data', err);
-          // Handle error appropriately
-        }
+        map(data => this.transformData(data))
+      ).subscribe(transformedData => {
+        this.updateChartOptions(transformedData, echarts, colors);
       });
     });
   }
@@ -48,29 +42,36 @@ export class EchartsAreaStackComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  processData(data: any[]): any {
-    if (!Array.isArray(data)) {
-      console.error('API response is not an array', data);
-      return {};
-    }
+  transformData(data: any) {
+    const hours: string[] = [];
+    const methodNames: string[] = [];
+    const seriesData: any[] = [];
 
-    // Process the data to group by hour
-    const grouped = data.reduce((acc, entry) => {
-      const hour = new Date(entry.calledAt).getHours();
-      const hourKey = `${hour}:00`;
-
-      if (!acc[hourKey]) {
-        acc[hourKey] = 0;
+    data.forEach(item => {
+      if (!hours.length) {
+        hours.push(...item.hours);
       }
-      acc[hourKey] += 1; // Count the occurrences
-      return acc;
-    }, {});
 
-    return grouped;
+      methodNames.push(item.methodName);
+
+      seriesData.push({
+        name: item.methodName,
+        type: 'line',
+        stack: 'Total',
+        data: item.count
+      });
+    });
+
+    return {
+      hours,
+      methodNames,
+      seriesData
+    };
   }
 
-  updateChartOptions(groupedData: any, echarts: any, colors: any) {
-    // Generate chart options based on processed data
+  updateChartOptions(transformedData: any, echarts: any, colors: any) {
+    const { hours, methodNames, seriesData } = transformedData;
+
     this.options = {
       backgroundColor: echarts.bg,
       color: [colors.warningLight, colors.infoLight, colors.dangerLight, colors.successLight, colors.primaryLight],
@@ -84,7 +85,7 @@ export class EchartsAreaStackComponent implements AfterViewInit, OnDestroy {
         },
       },
       legend: {
-        data: ['getData'],
+        data: methodNames,
         textStyle: {
           color: echarts.textColor,
         },
@@ -99,7 +100,7 @@ export class EchartsAreaStackComponent implements AfterViewInit, OnDestroy {
         {
           type: 'category',
           boundaryGap: false,
-          data: Object.keys(groupedData), // Hours
+          data: hours,
           axisTick: {
             alignWithLabel: true,
           },
@@ -135,15 +136,7 @@ export class EchartsAreaStackComponent implements AfterViewInit, OnDestroy {
           },
         },
       ],
-      series: [
-        {
-          name: 'getData',
-          type: 'line',
-          stack: 'Total amount',
-          areaStyle: { normal: { opacity: echarts.areaOpacity } },
-          data: Object.values(groupedData), // Values
-        },
-      ],
+      series: seriesData,
     };
   }
 }
