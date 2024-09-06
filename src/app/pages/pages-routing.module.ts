@@ -6,17 +6,17 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BusinessComponent } from './business/business.component';
 import { DataMasterComponent } from './data-master/data-master.component';
+import { authGuard } from '../guard/auth/auth.guard';
 
 const routes: Routes = [{
   path: '',
   component: PagesComponent,
+  canActivateChild: [authGuard],
   children: [
-
     {
       path: 'dashboard',
       component: DashboardComponent,
     },
-
     {
       path: 'business',
       component: BusinessComponent,
