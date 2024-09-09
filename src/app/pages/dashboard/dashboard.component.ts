@@ -13,7 +13,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private themeSubscription: Subscription;
   private dataSubscription: Subscription;
 
-  time = new Date();
+  // time = new Date();
 
   constructor(
     private theme: NbThemeService,
@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         map(data => this.transformData(data))
       ).subscribe(transformedData => {
         // console.log('dashboard: ', transformedData);
-        this.time = new Date();
+        // this.time = new Date();
         this.chartData = transformedData;
         this.cdr.detectChanges();
       });

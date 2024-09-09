@@ -7,15 +7,15 @@ import * as echarts from 'echarts';
   selector: 'ngx-echarts-area-stack',
   template: `
     <div echarts [options]="options" (chartInit)="onChartInit($event)" class="echart"></div>
-     <div [innerText]="changesTime"></div>
+     <!-- <div [innerText]="changesTime"></div> -->
   `,
 
 })
 export class EchartsAreaStackComponent implements OnChanges {
   @Input() data: any = {};
-  @Input() time: any = '';
+  // @Input() time: any = '';
 
-  changesTime = '';
+  // changesTime = '';
 
   options: EChartsOption = {};
   private chartInstance: echarts.ECharts | undefined;
@@ -30,7 +30,7 @@ export class EchartsAreaStackComponent implements OnChanges {
       this.updateChartOptions(this.data);
     }
     if (changes['time']) {
-      this.changesTime = this.time;
+      // this.changesTime = this.time;
     }
   }
 
